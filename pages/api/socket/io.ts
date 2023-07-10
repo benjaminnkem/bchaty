@@ -13,7 +13,6 @@ const io = async (req: NextApiRequest, res: NextApiResponseIO) => {
   if (!res.socket.server.io) {
     const path = "/api/socket/io";
     const httpServer: NetServer = res.socket.server as any;
-    console.log("New server socket to:", path);
     const io = new ServerIO(httpServer, { path: path, addTrailingSlash: false });
     res.socket.server.io = io;
 

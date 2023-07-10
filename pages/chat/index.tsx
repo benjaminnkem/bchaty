@@ -5,27 +5,25 @@ import { Socket, io as ClientIO } from "socket.io-client";
 type MessageType = {
   user: string;
   message: string;
+  color: string;
   datetime_sent: Date;
 };
 
-const dummyMessages: MessageType[] = [
-  {
-    user: "John",
-    message:
-      "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Delectus cumque laboriosam perferendis magnam ab voluptas! Odit maiores illo corporis rerum.",
-    datetime_sent: new Date(),
-  },
-  { user: "Mary", message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.", datetime_sent: new Date() },
-  { user: "Joshua", message: "Hello world!", datetime_sent: new Date() },
-  {
-    user: "Benjamin",
-    message: "Loremmagnam ab voluptas! Odit maiores illo corporis rerum.",
-    datetime_sent: new Date(),
-  },
+const rand_colors = [
+  "text-red-500",
+  "text-green-500",
+  "text-purple-500",
+  "text-yellow-500",
+  "text-indigo-500",
+  "text-pink-500",
+  "text-brown-500",
 ];
 
 const randomUser = new Date().getTime().toString();
-const User = randomUser.substring(randomUser.length, randomUser.length - 4);
+const User = {
+  username: `User_${randomUser.substring(randomUser.length, randomUser.length - 4)}`,
+  color: rand_colors[Math.floor(Math.random() * rand_colors.length)],
+};
 
 let socket: Socket;
 const ChatPage: React.FC = () => {
@@ -39,63 +37,71 @@ const ChatPage: React.FC = () => {
       console.log("SOCKET CONNECTED!", socket.id);
     });
 
+    // Get Messages from the server
+    socket.on("receive-message", (data) => {
+      setMessages((pre) => [...pre, data]);
+    });
+
     if (socket) return () => socket.disconnect();
   }, []);
 
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(User.color, Math.floor(Math.random() * rand_colors.length));
     if (!messageBox || messageBox === "") return;
 
-    const msgData: MessageType = { user: User, message: messageBox, datetime_sent: new Date() };
+    const msgData: MessageType = {
+      user: User.username,
+      message: messageBox,
+      color: User.color,
+      datetime_sent: new Date(),
+    };
     socket.emit("send-message", msgData);
+    setMessageBox("");
   };
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full h-full">
-        <div>
-          <div className="fixed top-0 left-0 w-full p-4 bg-[#262626] z-20">
-            <div className="flex items-center justify-center">
-              <p className="py-1 font-bold">BChaty by Nkem Benjamin</p>
-            </div>
+      <div>
+        <div className="fixed top-0 left-0 w-full p-4 bg-[#262626] z-20">
+          <div className="flex items-center justify-center">
+            <p className="py-1 font-bold">BChaty by Nkem Benjamin</p>
           </div>
+        </div>
 
-          <div className="fixed top-0 left-0 w-full h-full bg-[#1f1f1f]">
-            <div className="mt-16 space-y-4" id="msg_body">
-              {messages.length > 0 ? (
-                messages.map((msg, i) => (
-                  <div className="even:bg-[#303030] p-2" key={i}>
-                    <p className="font-bold">{msg.user}:</p>
-                    <p className="text-sm font-light">{msg.message}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="grid space-y-1 text-center place-content-center">
-                  <p className="font-bold text-gray-300">No messages</p>
-                  <p className="max-w-sm mx-auto text-sm font-light">
-                    Send a message to see demo or open this url in another device/window
-                  </p>
-                </div>
-              )}
+        <div className="bg-[#1f1f1f] min-h-screen mt-16 mb-20">
+          {messages.length > 0 ? (
+            messages.map((msg, i) => (
+              <div className="even:bg-[#303030] p-2 space-y-1" key={i}>
+                <p className={`font-bold ${msg.color}`}>{msg.user}:</p>
+                <p className="text-sm font-light">{msg.message}</p>
+              </div>
+            ))
+          ) : (
+            <div className="grid min-h-screen space-y-1 text-center place-content-center">
+              <p className="font-bold text-gray-300">No messages</p>
+              <p className="max-w-sm mx-auto text-sm font-light">
+                Send a message to see demo or open this url in another device/window
+              </p>
             </div>
-          </div>
+          )}
+        </div>
 
-          <div className="fixed bottom-0 left-0 w-full p-4 bg-[#262626] z-20">
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={messageBox}
-                onChange={(e) => setMessageBox(e.target.value)}
-                className="w-4/5 p-2 duration-200 bg-transparent border border-gray-400 rounded-md focus:outline-none active:outline-none focus:border-orange-600 active:border-orange-600"
-              />
+        <div className="fixed bottom-0 left-0 w-full p-4 bg-[#262626] z-20">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={messageBox}
+              onChange={(e) => setMessageBox(e.target.value)}
+              className="w-4/5 p-2 duration-200 bg-transparent border border-gray-400 rounded-md focus:outline-none active:outline-none focus:border-orange-600 active:border-orange-600"
+            />
 
-              <button
-                className="w-1/5 py-2 duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
-                onClick={(e) => handleSendMessage(e)}
-              >
-                Send
-              </button>
-            </div>
+            <button
+              className="w-1/5 py-2 duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
+              onClick={(e) => handleSendMessage(e)}
+            >
+              Send
+            </button>
           </div>
         </div>
       </div>
