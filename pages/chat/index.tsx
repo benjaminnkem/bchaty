@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
 
 type MessageType = {
@@ -14,7 +14,7 @@ const rand_colors = [
   "text-green-500",
   "text-purple-500",
   "text-yellow-500",
-  "text-indigo-500",
+  "text-stone-500",
   "text-pink-500",
   "text-brown-500",
 ];
@@ -29,6 +29,7 @@ let socket: Socket;
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [messageBox, setMessageBox] = useState<string>("");
+  const messageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect((): any => {
     socket = ClientIO(process.env.NEXT_PUBLIC_SITE_URL!, { path: "/api/socket/io" });
@@ -58,6 +59,8 @@ const ChatPage: React.FC = () => {
     };
     socket.emit("send-message", msgData);
     setMessageBox("");
+    const msgContainer = messageContainerRef.current;
+    if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
   };
 
   return (
@@ -69,16 +72,16 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#1f1f1f] min-h-screen mt-16 mb-20">
+        <div className="bg-[#1f1f1f] min-h-screen mt-16 mb-[4.6rem]" ref={messageContainerRef}>
           {messages.length > 0 ? (
             messages.map((msg, i) => (
               <div className="even:bg-[#303030] p-2 space-y-1" key={i}>
                 <p className={`font-bold ${msg.color}`}>{msg.user}:</p>
-                <p className="text-sm font-light">{msg.message}</p>
+                <p className="text-sm font-light whitespace-pre-line">{msg.message}</p>
               </div>
             ))
           ) : (
-            <div className="grid min-h-screen space-y-1 text-center place-content-center">
+            <div className="grid min-h-screen -mt-16 space-y-1 text-center select-none place-content-center">
               <p className="font-bold text-gray-300">No messages</p>
               <p className="max-w-sm mx-auto text-sm font-light">
                 Send a message to see demo or open this url in another device/window
@@ -89,12 +92,11 @@ const ChatPage: React.FC = () => {
 
         <div className="fixed bottom-0 left-0 w-full p-4 bg-[#262626] z-20">
           <div className="flex items-center space-x-2">
-            <input
-              type="text"
+            <textarea
               value={messageBox}
               onChange={(e) => setMessageBox(e.target.value)}
-              className="w-4/5 p-2 duration-200 bg-transparent border border-gray-400 rounded-md focus:outline-none active:outline-none focus:border-orange-600 active:border-orange-600"
-            />
+              className="w-4/5 p-2 duration-200 bg-transparent border border-gray-400 rounded-md resize-none focus:outline-none active:outline-none focus:border-orange-600 active:border-orange-600"
+            ></textarea>
 
             <button
               className="w-1/5 py-2 duration-200 bg-orange-600 rounded-md hover:bg-orange-500"
