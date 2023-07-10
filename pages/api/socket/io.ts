@@ -17,6 +17,7 @@ const io = async (req: NextApiRequest, res: NextApiResponseIO) => {
     res.socket.server.io = io;
 
     io.on("connection", (socket) => {
+      console.log("NEW SOCKET CONNECTED", socket.id);
       io.emit("new-user", { info: "A new user joined!" });
 
       socket.on("send-message", (obj) => {

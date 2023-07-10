@@ -29,7 +29,7 @@ let socket: Socket;
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [messageBox, setMessageBox] = useState<string>("");
-  const messageContainerRef = useRef<HTMLDivElement>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect((): any => {
     socket = ClientIO(process.env.NEXT_PUBLIC_SITE_URL!, { path: "/api/socket/io" });
@@ -46,9 +46,12 @@ const ChatPage: React.FC = () => {
     if (socket) return () => socket.disconnect();
   }, []);
 
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(User.color, Math.floor(Math.random() * rand_colors.length));
     if (!messageBox || messageBox === "") return;
 
     const msgData: MessageType = {
@@ -59,8 +62,7 @@ const ChatPage: React.FC = () => {
     };
     socket.emit("send-message", msgData);
     setMessageBox("");
-    const msgContainer = messageContainerRef.current;
-    if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
+    scrollToBottom();
   };
 
   return (
@@ -72,14 +74,17 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#1f1f1f] min-h-screen mt-16 mb-[4.6rem]" ref={messageContainerRef}>
+        <div className="bg-[#1f1f1f] min-h-screen mt-16">
           {messages.length > 0 ? (
-            messages.map((msg, i) => (
-              <div className="even:bg-[#303030] p-2 space-y-1" key={i}>
-                <p className={`font-bold ${msg.color}`}>{msg.user}:</p>
-                <p className="text-sm font-light whitespace-pre-line">{msg.message}</p>
-              </div>
-            ))
+            <div>
+              {messages.map((msg, i) => (
+                <div className="even:bg-[#303030] p-2 space-y-1" key={i}>
+                  <p className={`font-bold ${msg.color}`}>{msg.user}:</p>
+                  <p className="text-sm font-light whitespace-pre-line">{msg.message}</p>
+                </div>
+              ))}
+              <div ref={messageEndRef} className="h-28"></div>
+            </div>
           ) : (
             <div className="grid min-h-screen -mt-16 space-y-1 text-center select-none place-content-center">
               <p className="font-bold text-gray-300">No messages</p>
@@ -94,6 +99,7 @@ const ChatPage: React.FC = () => {
           <div className="flex items-center space-x-2">
             <textarea
               value={messageBox}
+              rows={1}
               onChange={(e) => setMessageBox(e.target.value)}
               className="w-4/5 p-2 duration-200 bg-transparent border border-gray-400 rounded-md resize-none focus:outline-none active:outline-none focus:border-orange-600 active:border-orange-600"
             ></textarea>
