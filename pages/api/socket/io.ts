@@ -2,6 +2,9 @@ import { NextApiResponseIO } from "@/types/socket-res";
 import { NextApiRequest } from "next";
 import { Server as NetServer } from "http";
 import { Server as ServerIO } from "socket.io";
+import { dbConnection } from "@/utils/db";
+import message from "@/utils/models/message";
+import { MessageType } from "@/types/sendMessage";
 
 export const config = {
   api: {
@@ -20,7 +23,14 @@ const io = async (req: NextApiRequest, res: NextApiResponseIO) => {
       console.log("NEW SOCKET CONNECTED", socket.id);
       io.emit("new-user", { info: "A new user joined!" });
 
-      socket.on("send-message", (obj) => {
+      socket.on("send-message", async (obj: MessageType) => {
+        await dbConnection();
+        const messageScheme = await message.create({
+          user: obj.user,
+          message: obj.message,
+          color: obj.color,
+          datetime_sent: new Date(obj.datetime_sent).toISOString(),
+        });
         io.emit("receive-message", obj);
       });
     });

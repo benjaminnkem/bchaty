@@ -1,22 +1,23 @@
 "use client";
+import { MessageType } from "@/types/sendMessage";
+import { dbConnection } from "@/utils/db";
+import message from "@/utils/models/message";
 import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
 
-type MessageType = {
-  user: string;
-  message: string;
-  color: string;
-  datetime_sent: Date;
-};
-
 const rand_colors = [
   "text-red-500",
+  "text-red-400",
   "text-green-500",
+  "text-green-800",
   "text-purple-500",
+  "text-purple-800",
   "text-yellow-500",
+  "text-yellow-700",
   "text-stone-500",
   "text-pink-500",
   "text-brown-500",
+  "text-slate-400",
 ];
 
 const randomUser = new Date().getTime().toString();
@@ -26,8 +27,13 @@ const User = {
 };
 
 let socket: Socket;
-const ChatPage: React.FC = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+const ChatPage: React.FC = ({ fetchMessages }: any) => {
+  const [messages, setMessages] = useState<MessageType[]>(
+    JSON.parse(fetchMessages).sort((a: MessageType, b: MessageType) => {
+      if (a.datetime_sent > b.datetime_sent) return 1;
+      return -1;
+    })
+  );
   const [messageBox, setMessageBox] = useState<string>("");
   const messageEndRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +62,7 @@ const ChatPage: React.FC = () => {
 
     const msgData: MessageType = {
       user: User.username,
-      message: messageBox,
+      message: messageBox.trim(),
       color: User.color,
       datetime_sent: new Date(),
     };
@@ -116,5 +122,16 @@ const ChatPage: React.FC = () => {
     </>
   );
 };
+
+export async function getServerSideProps() {
+  await dbConnection();
+  const messagesFromDB = await message.find().limit(100).sort({ datetime_sent: -1 });
+
+  return {
+    props: {
+      fetchMessages: JSON.stringify(messagesFromDB),
+    },
+  };
+}
 
 export default ChatPage;
