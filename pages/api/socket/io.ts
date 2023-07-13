@@ -1,10 +1,10 @@
-import { NextApiResponseIO } from "@/types/socket-res";
+import { NextApiResponseIO } from "@/types/socket-res.types";
 import { NextApiRequest } from "next";
 import { Server as NetServer } from "http";
 import { Server as ServerIO } from "socket.io";
 import { dbConnection } from "@/utils/db";
 import message from "@/utils/models/message";
-import { MessageType } from "@/types/sendMessage";
+import { MessageType } from "@/types/sendMessage.types";
 
 export const config = {
   api: {

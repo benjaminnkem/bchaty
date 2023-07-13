@@ -1,7 +1,8 @@
 "use client";
-import { MessageType } from "@/types/sendMessage";
+import { MessageType } from "@/types/sendMessage.types";
 import { dbConnection } from "@/utils/db";
 import message from "@/utils/models/message";
+import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
 
@@ -73,6 +74,9 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
 
   return (
     <>
+      <Head>
+        <title>Btchay - Chats</title>
+      </Head>
       <div>
         <div className="fixed top-0 left-0 w-full p-4 bg-[#262626] z-20">
           <div className="flex items-center justify-center">

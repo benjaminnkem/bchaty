@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 type NewUser = {
@@ -16,7 +15,6 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
   const [err, setErr] = useState<NewUser>({} as NewUser);
   const [inputs, setInputs] = useState<NewUser>({ username: "", password: "" });
   const [status, setStatus] = useState<{ loading: boolean }>({ loading: false });
-  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -49,6 +47,19 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
       return;
     }
 
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: inputs.username, password: inputs.password }),
+    });
+
+    if (!res.ok) {
+      setStatus({ loading: false });
+      console.log("An error occurred");
+    }
+
+    console.log("successful");
+    setInputs({ username: "", password: "" });
     setStatus({ loading: false });
   };
 
