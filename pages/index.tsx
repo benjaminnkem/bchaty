@@ -1,3 +1,4 @@
+import SignUp from "@/components/SignUp";
 import Link from "next/link";
 
 export default function Home() {
@@ -16,6 +17,8 @@ export default function Home() {
             </Link>
           </div>
         </div>
+
+        <SignUp />
       </div>
     </main>
   );
