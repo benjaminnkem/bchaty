@@ -1,4 +1,5 @@
 "use client";
+import { signIn } from "next-auth/react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 type LogInfo = {
@@ -22,6 +23,8 @@ const Login = ({ selectAction, setSelectAction }: LoginProps) => {
     e.preventDefault();
     setStatus({ loading: true });
 
+    console.log("something");
+    await signIn("credentials", { username: inputs.username, password: inputs.password });
     setStatus({ loading: false });
   };
 

@@ -4,6 +4,7 @@ const usersSchema = new Schema({
   username: { type: String, required: true, trim: true },
   rooms: { type: Array, required: true, default: [] },
   color: { type: String, default: "white" },
+  password: { type: String, required: true, trim: true },
   date_joined: { type: Date, default: Date.now },
 });
 

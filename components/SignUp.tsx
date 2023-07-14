@@ -45,22 +45,22 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
       console.log(err);
       setStatus({ loading: false });
       return;
-    }
+    } else {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: inputs.username, password: inputs.password }),
+      });
 
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: inputs.username, password: inputs.password }),
-    });
+      if (!res.ok) {
+        setStatus({ loading: false });
+        console.log("An error occurred");
+      }
 
-    if (!res.ok) {
+      console.log("successful");
+      setInputs({ username: "", password: "" });
       setStatus({ loading: false });
-      console.log("An error occurred");
     }
-
-    console.log("successful");
-    setInputs({ username: "", password: "" });
-    setStatus({ loading: false });
   };
 
   return (
@@ -76,13 +76,13 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
             <form onSubmit={(e) => handleSubmit(e)}>
               <div className="space-y-4">
                 <div>
-                  <label className="text-lg font-semibold" htmlFor="username">
+                  <label className="text-lg font-semibold" htmlFor="signUpUsername">
                     Username
                   </label>
                   <input
                     type="text"
                     name="username"
-                    id="username"
+                    id="signUpUsername"
                     autoComplete="off"
                     className={`block p-1 text-gray-300 bg-transparent border-b w-full focus:outline-none ${
                       err.username ? "border-b-red-500" : "border-b-gray-500"
@@ -94,13 +94,13 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
                   {err.username && <p className="text-xs font-semibold text-red-500">{err.username}</p>}
                 </div>
                 <div>
-                  <label className="text-lg font-semibold" htmlFor="password">
+                  <label className="text-lg font-semibold" htmlFor="signUpPassword">
                     Password
                   </label>
                   <input
                     type="password"
                     name="password"
-                    id="password"
+                    id="signUpPassword"
                     value={inputs.password}
                     autoComplete="off"
                     className={`block p-1 text-gray-300 bg-transparent border-b w-full focus:outline-none ${

@@ -1,4 +1,6 @@
+"use client";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 type LogInfo = {
   username: string;
@@ -16,6 +18,8 @@ const MainLogin = () => {
     e.preventDefault();
     setStatus({ loading: true });
 
+    console.log("something");
+    await signIn("credentials", { username: inputs.username, password: inputs.password });
     setStatus({ loading: false });
   };
 
@@ -28,13 +32,13 @@ const MainLogin = () => {
             <form onSubmit={(e) => handleSubmit(e)}>
               <div className="space-y-4">
                 <div>
-                  <label className="text-lg font-semibold" htmlFor="username">
+                  <label className="text-lg font-semibold" htmlFor="loginUsername">
                     Username
                   </label>
                   <input
                     type="text"
                     name="username"
-                    id="username"
+                    id="loginUsername"
                     autoComplete="off"
                     className={`block p-1 text-gray-300 bg-transparent border-b-gray-500 border-b w-full focus:outline-none`}
                     value={inputs.username}
@@ -43,13 +47,13 @@ const MainLogin = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-lg font-semibold" htmlFor="password">
+                  <label className="text-lg font-semibold" htmlFor="loginPassword">
                     Password
                   </label>
                   <input
                     type="password"
                     name="password"
-                    id="password"
+                    id="loginPassword"
                     value={inputs.password}
                     autoComplete="off"
                     className={`block p-1 text-gray-300 bg-transparent border-b-gray-500 border-b w-full focus:outline-none`}

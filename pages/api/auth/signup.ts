@@ -1,15 +1,17 @@
 import { dbConnection } from "@/utils/db";
 import UsersModel from "@/utils/models/UsersModel";
 import { NextApiResponse } from "next";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import bcryptjs from "bcryptjs";
 
 export default async function handler(req: NextRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     try {
-      const userInfo = req.body;
+      const userInfo = req.body as any;
       await dbConnection();
-      const users = await UsersModel.create(userInfo);
-      console.log("user created successfully");
+
+      const hashedPassword = await bcryptjs.hash(userInfo.password, 12);
+      await UsersModel.create({ ...userInfo, password: hashedPassword });
       res.status(200).json({ message: "Successfully created user" });
     } catch (err) {
       console.log(err);
