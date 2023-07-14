@@ -42,7 +42,6 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
     setErr(validator);
 
     if (Object.keys(err).length > 0) {
-      console.log(err);
       setStatus({ loading: false });
       return;
     } else {
@@ -57,7 +56,6 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
         console.log("An error occurred");
       }
 
-      console.log("successful");
       setInputs({ username: "", password: "" });
       setStatus({ loading: false });
     }

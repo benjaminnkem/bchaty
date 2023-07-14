@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 type LogInfo = {
   username: string;
@@ -10,6 +11,7 @@ type LogInfo = {
 const MainLogin = () => {
   const [inputs, setInputs] = useState<LogInfo>({ username: "", password: "" });
   const [status, setStatus] = useState<{ loading: boolean }>({ loading: false });
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -21,6 +23,8 @@ const MainLogin = () => {
     console.log("something");
     await signIn("credentials", { username: inputs.username, password: inputs.password });
     setStatus({ loading: false });
+
+    router.push("/chat");
   };
 
   return (
