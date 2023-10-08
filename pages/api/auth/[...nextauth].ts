@@ -20,7 +20,6 @@ export default NextAuth({
       },
       async authorize(credentials, _req) {
         try {
-          console.log("credentials", credentials);
           const email = credentials!.email;
           const password = credentials!.password;
           await dbConnection();

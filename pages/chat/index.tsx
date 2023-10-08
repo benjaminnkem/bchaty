@@ -5,6 +5,9 @@ import { MessageType } from "@/lib/types/sendMessage.types";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
+import { useUserData } from "@/lib/contexts/authuser-context";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const rand_colors = [
   "text-red-500",
@@ -30,13 +33,13 @@ const User = {
 let socket: Socket;
 const ChatPage: React.FC = ({ fetchMessages }: any) => {
   const [messages, setMessages] = useState<MessageType[]>(
-    JSON.parse(fetchMessages).sort((a: MessageType, b: MessageType) => {
-      if (a.datetime_sent > b.datetime_sent) return 1;
-      return -1;
-    })
+    JSON.parse(fetchMessages).sort((a: MessageType, b: MessageType) => (a.datetime_sent > b.datetime_sent ? 1 : -1))
   );
   const [messageBox, setMessageBox] = useState<string>("");
   const messageEndRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+  const { data: session } = useSession();
 
   useEffect((): any => {
     socket = ClientIO(process.env.NEXT_PUBLIC_SITE_URL!, { path: "/api/socket/io" });
@@ -56,6 +59,11 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  if (!session) {
+    router.push("/account/login");
+    return;
+  }
 
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "../register/(styles)/index.module.css";
 import CircleLoader from "@/components/Common/Loader/circlce-loader";
+import Head from "next/head";
+import { useUserData } from "@/lib/contexts/authuser-context";
 
 type LogInfo = {
   email: string;
@@ -16,6 +18,11 @@ const Login = () => {
   const [inputs, setInputs] = useState<LogInfo>({ email: "", password: "" });
   const [status, setStatus] = useState({ loading: false });
   const router = useRouter();
+  const { user } = useUserData();
+
+  if (user) {
+    router.replace("/chat");
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -38,6 +45,9 @@ const Login = () => {
 
   return (
     <>
+      <Head>
+        <title>Login - BChaty</title>
+      </Head>
       {status.loading && <CircleLoader />}
       <div className={`grid grid-cols-5 min-h-screen`}>
         <div className="relative overflow-hidden text-white col-span-3">

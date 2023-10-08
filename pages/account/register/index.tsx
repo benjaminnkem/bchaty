@@ -21,7 +21,7 @@ const SignUp: React.FC<SignUpProps> = ({}: SignUpProps) => {
     e.preventDefault();
     setStatus({ loading: true });
 
-    const res = fetch("/api/auth/signup", {
+    fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: inputs.username, password: inputs.password }),

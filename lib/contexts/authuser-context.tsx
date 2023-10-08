@@ -10,8 +10,10 @@ const AuthUserProvider = ({ children }: { children: React.ReactNode }) => {
   const [userData, setUserData] = useState<Session | null>(null);
 
   useEffect(() => {
-    setUserData(session);
-  }, [userData, session, status]);
+    if (status === "authenticated" && session) {
+      setUserData(session);
+    } else setUserData({} as Session);
+  }, [session, status]);
 
   if (status === "loading")
     return (
@@ -23,11 +25,12 @@ const AuthUserProvider = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
 
-  return <div>{children}</div>;
+  return <AuthUserContext.Provider value={userData}>{children}</AuthUserContext.Provider>;
 };
 
 export const useUserData = (): AuthUserContext => {
   const context = useContext(AuthUserContext);
+
   if (!context) throw new Error("useUserData must be used under the AuthUserProvider");
   return context;
 };
