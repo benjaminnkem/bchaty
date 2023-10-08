@@ -8,15 +8,25 @@ export default NextAuth({
   providers: [
     Credentials({
       type: "credentials",
-      credentials: { username: {}, password: {} },
+      credentials: {
+        email: {
+          label: "email",
+          type: "email",
+        },
+        password: {
+          label: "password",
+          type: "password",
+        },
+      },
       async authorize(credentials, _req) {
         try {
-          const username = credentials!.username;
+          console.log("credentials", credentials);
+          const email = credentials!.email;
           const password = credentials!.password;
           await dbConnection();
-          const user = await UsersModel.findOne({ username: username });
-          if (!user || user.length === 0) {
-            throw new Error(`The username ${username} does not exist`);
+          const user = await UsersModel.findOne({ email });
+          if (!user) {
+            throw new Error(`The email ${email} does not exist`);
           }
 
           const passwordMatch = await compare(password as string, user.password);
@@ -27,7 +37,7 @@ export default NextAuth({
           return { id: user.id, name: user.username, email: user.email }; // returning a unique cookie object
         } catch (e) {
           console.log(e);
-          throw new Error("Login Failed, re-check credentials 😣");
+          throw new Error("Login Failed, please try again.");
         }
       },
     }),

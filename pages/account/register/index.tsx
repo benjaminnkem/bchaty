@@ -14,7 +14,6 @@ interface NewUser {
 interface SignUpProps {}
 
 const SignUp: React.FC<SignUpProps> = ({}: SignUpProps) => {
-  const [err, setErr] = useState<NewUser>({} as NewUser);
   const [inputs, setInputs] = useState<NewUser>({ username: "", password: "" });
   const [status, setStatus] = useState<{ loading: boolean }>({ loading: false });
 
@@ -147,14 +146,13 @@ const SignUp: React.FC<SignUpProps> = ({}: SignUpProps) => {
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold" htmlFor="signUpPassword">
+                <label className="font-semibold" htmlFor="password">
                   Password
                 </label>
                 <input
                   type="password"
                   name="password"
-                  id="signUpPassword"
-                  value={inputs.password}
+                  id="password"
                   autoComplete="off"
                   className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
                   placeholder="************"
