@@ -2,7 +2,7 @@ import NextAuth from "next-auth/next";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { dbConnection } from "@/lib/utils/mongoConnection";
-import UsersModel from "@/lib/utils/models/UsersModel";
+import UsersModel from "@/lib/utils/models/UsersSchema";
 
 export default NextAuth({
   providers: [

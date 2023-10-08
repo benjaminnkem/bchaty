@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import { NextRequest } from "next/server";
 import bcryptjs from "bcryptjs";
 import { dbConnection } from "@/lib/utils/mongoConnection";
-import UsersModel from "@/lib/utils/models/UsersModel";
+import UsersModel from "@/lib/utils/models/UsersSchema";
 
 export default async function handler(req: NextRequest, res: NextApiResponse) {
   if (req.method === "POST") {

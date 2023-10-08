@@ -1,129 +1,195 @@
 "use client";
+import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
+import styles from "./(styles)/index.module.css";
+import CircleLoader from "@/components/Common/Loader/circlce-loader";
 
-type NewUser = {
+interface NewUser {
   username: string;
   password: string;
-};
+}
 
-type SignUpProps = {};
+interface SignUpProps {}
 
-const SignUp = ({}: SignUpProps) => {
+const SignUp: React.FC<SignUpProps> = ({}: SignUpProps) => {
   const [err, setErr] = useState<NewUser>({} as NewUser);
   const [inputs, setInputs] = useState<NewUser>({ username: "", password: "" });
   const [status, setStatus] = useState<{ loading: boolean }>({ loading: false });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setInputs({ ...inputs, [e.target.name]: e.target.value });
-
-  const validateInput = () => {
-    const errors = {} as NewUser;
-    if (!inputs.username) {
-      errors.username = "Please enter a username";
-    }
-
-    if (!inputs.password) {
-      errors.password = "Please enter a password";
-    } else if (inputs.password.length < 8) {
-      errors.password = "Password cannot be less than 8 characters";
-    }
-
-    return errors;
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus({ loading: true });
 
-    const validator = validateInput();
-    setErr(validator);
-
-    if (Object.keys(err).length > 0) {
-      setStatus({ loading: false });
-      return;
-    } else {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: inputs.username, password: inputs.password }),
-      });
-
-      if (!res.ok) {
+    const res = fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: inputs.username, password: inputs.password }),
+    })
+      .then(() => console.log("user created successfully"))
+      .catch(() => {
         setStatus({ loading: false });
         console.log("An error occurred");
-      }
-
-      setInputs({ username: "", password: "" });
-      setStatus({ loading: false });
-    }
+      })
+      .finally(() => {
+        setInputs({ username: "", password: "" });
+        setStatus({ loading: false });
+      });
   };
 
   return (
     <>
-      <div
-        className={`top-0 left-0 min-h-screen transition-colors duration-200 flex items-center justify-center w-full bg-slate-900 bg-opacity-90 overflow-hidden`}
-      >
-        <div className="grid w-full h-full place-content-center">
-          <div className="p-4 border-2 bg-slate-800 rounded-md min-w-[350px]">
-            <h2 className="py-1 mb-2 font-bold text-end">Sign Up</h2>
-            <form onSubmit={(e) => handleSubmit(e)}>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-lg font-semibold" htmlFor="signUpUsername">
-                    Username
+      <Head>
+        <title>Register - BChaty</title>
+      </Head>
+      {status.loading && <CircleLoader />}
+      <div className={`grid grid-cols-5 min-h-screen`}>
+        <div className="relative overflow-hidden text-white col-span-3">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <Image
+              src={"/images/backgrounds/bitcoin.jpg"}
+              alt="Bit"
+              width={1024}
+              height={1024}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className={`${styles.signupSideOverlay} absolute top-0 left-0 w-full h-full`}></div>
+          <div className="absolute top-0 left-0 w-full h-full p-10">
+            <h1 className="font-semibold text-3xl">
+              Bchaty<span className="text-purple-800">.</span>
+            </h1>
+
+            <div className="mt-20 space-y-6">
+              <div className="max-w-sm p-1 border border-white/40 rounded-md">
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat et, omnis vero repellendus illo,
+                  architecto fugit!
+                </p>
+              </div>
+              <div className="max-w-sm p-1 ml-8 border border-white/40 rounded-md">
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat et, omnis vero repellendus illo,
+                  architecto fugit!
+                </p>
+              </div>
+              <div className="max-w-sm p-1 ml-16 border border-white/40 rounded-md">
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat et, omnis vero repellendus illo,
+                  architecto fugit!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="xl:p-10 lg:p-8 border bg-white shadow-lg border-gray-200 dark:bg-slate-800 rounded-lg col-span-2">
+          <h2 className="py-1 mb-2 text-3xl font-bold text-center">Sign Up</h2>
+          <form onSubmit={(e) => handleSubmit(e)}>
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <label className="font-semibold" htmlFor="firstName">
+                    First Name
                   </label>
                   <input
                     type="text"
-                    name="username"
-                    id="signUpUsername"
+                    name="firstName"
+                    id="firstName"
                     autoComplete="off"
-                    className={`block p-1 text-gray-300 bg-transparent border-b w-full focus:outline-none ${
-                      err.username ? "border-b-red-500" : "border-b-gray-500"
-                    }`}
-                    value={inputs.username}
-                    onChange={(e) => handleChange(e)}
+                    className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
+                    placeholder="Enter your first name"
                     maxLength={20}
                   />
-                  {err.username && <p className="text-xs font-semibold text-red-500">{err.username}</p>}
                 </div>
-                <div>
-                  <label className="text-lg font-semibold" htmlFor="signUpPassword">
-                    Password
+                <div className="space-y-1">
+                  <label className="font-semibold" htmlFor="lastName">
+                    Last Name
                   </label>
                   <input
-                    type="password"
-                    name="password"
-                    id="signUpPassword"
-                    value={inputs.password}
+                    type="text"
+                    name="lastName"
+                    id="lastName"
                     autoComplete="off"
-                    className={`block p-1 text-gray-300 bg-transparent border-b w-full focus:outline-none ${
-                      err.password ? "border-b-red-500" : "border-b-gray-500"
-                    }`}
-                    onChange={(e) => handleChange(e)}
+                    className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
+                    placeholder="Enter your first name"
+                    maxLength={20}
                   />
-                  {err.password && <p className="text-xs font-semibold text-red-500">{err.password}</p>}
                 </div>
-
-                <button
-                  className="w-full py-1 duration-200 bg-gray-600 rounded-md hover:bg-gray-700 disabled:bg-gray-400"
-                  disabled={status.loading ? true : false}
-                >
-                  {status.loading ? "Validating..." : "Sign Up"}
-                </button>
               </div>
-            </form>
+              <div className="space-y-1">
+                <label className="font-semibold" htmlFor="email">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  autoComplete="off"
+                  className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
+                  placeholder="Enter email"
+                  maxLength={20}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="font-semibold" htmlFor="username">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  id="username"
+                  autoComplete="off"
+                  className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
+                  placeholder="Enter username"
+                  maxLength={20}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="font-semibold" htmlFor="signUpPassword">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="signUpPassword"
+                  value={inputs.password}
+                  autoComplete="off"
+                  className={`block p-2 text-gray-700 dark:text-gray-300 bg-transparent border rounded-md w-full focus:outline-none`}
+                  placeholder="************"
+                />
+              </div>
 
-            <p>
-              Have an account?{" "}
-              <Link
-                href={"/account/login"}
-                className="mt-1 font-semibold text-center text-purple-400 cursor-pointer my-2"
+              <div>
+                <label htmlFor="terms" className="flex items-center gap-1">
+                  <input type="checkbox" name="terms" id="terms" />
+                  <span>
+                    You accept our <span className="font-semibold text-purple-700">Terms</span> and{" "}
+                    <span className="font-semibold text-purple-700">Conditions</span>
+                  </span>
+                </label>
+              </div>
+
+              <button
+                className="w-full py-1 md:py-2 duration-200 dark:bg-gray-600 rounded-md dark:hover:bg-gray-700 
+                  border-2 border-purple-700 text-purple-50 transition-colors bg-purple-700 hover:bg-purple-600 disabled:bg-gray-400"
+                disabled={status.loading ? true : false}
               >
-                Login
-              </Link>
-            </p>
-          </div>
+                {status.loading ? "Validating..." : "Sign Up"}
+              </button>
+            </div>
+          </form>
+
+          <p className="mt-2">
+            Have an account?{" "}
+            <Link
+              href={"/account/login"}
+              className="mt-1 font-semibold text-center dark:text-purple-400 text-purple-700 cursor-pointer my-2"
+            >
+              Login
+            </Link>
+          </p>
         </div>
       </div>
     </>
