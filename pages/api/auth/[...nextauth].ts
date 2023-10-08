@@ -1,17 +1,18 @@
-import { dbConnection } from "@/utils/db";
-import UsersModel from "@/utils/models/UsersModel";
 import NextAuth from "next-auth/next";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
+import { dbConnection } from "@/lib/utils/mongoConnection";
+import UsersModel from "@/lib/utils/models/UsersModel";
 
 export default NextAuth({
   providers: [
     Credentials({
       type: "credentials",
-      credentials: {},
+      credentials: { username: {}, password: {} },
       async authorize(credentials, _req) {
         try {
-          const { username, password } = credentials;
+          const username = credentials!.username;
+          const password = credentials!.password;
           await dbConnection();
           const user = await UsersModel.findOne({ username: username });
           if (!user || user.length === 0) {

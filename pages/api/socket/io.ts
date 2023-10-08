@@ -1,10 +1,10 @@
-import { NextApiResponseIO } from "@/types/socket-res.types";
+import { NextApiResponseIO } from "@/lib/types/socket-res.types";
 import { NextApiRequest } from "next";
 import { Server as NetServer } from "http";
 import { Server as ServerIO } from "socket.io";
-import { dbConnection } from "@/utils/db";
-import message from "@/utils/models/message";
-import { MessageType } from "@/types/sendMessage.types";
+import { MessageType } from "@/lib/types/sendMessage.types";
+import { dbConnection } from "@/lib/utils/mongoConnection";
+import message from "@/lib/utils/models/message";
 
 export const config = {
   api: {
@@ -25,7 +25,7 @@ const io = async (req: NextApiRequest, res: NextApiResponseIO) => {
 
       socket.on("send-message", async (obj: MessageType) => {
         await dbConnection();
-        const messageScheme = await message.create({
+        await message.create({
           user: obj.user,
           message: obj.message,
           color: obj.color,

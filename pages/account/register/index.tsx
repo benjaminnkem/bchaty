@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 type NewUser = {
@@ -6,12 +7,9 @@ type NewUser = {
   password: string;
 };
 
-type SignUpProps = {
-  selectAction: string;
-  setSelectAction: Dispatch<SetStateAction<string>>;
-};
+type SignUpProps = {};
 
-const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
+const SignUp = ({}: SignUpProps) => {
   const [err, setErr] = useState<NewUser>({} as NewUser);
   const [inputs, setInputs] = useState<NewUser>({ username: "", password: "" });
   const [status, setStatus] = useState<{ loading: boolean }>({ loading: false });
@@ -64,12 +62,10 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
   return (
     <>
       <div
-        className={`fixed top-0 left-0 h-full duration-200 bg-black bg-opacity-90 overflow-hidden ${
-          selectAction === "signup" ? "w-full" : "w-[.25px]"
-        }`}
+        className={`top-0 left-0 min-h-screen transition-colors duration-200 flex items-center justify-center w-full bg-slate-900 bg-opacity-90 overflow-hidden`}
       >
         <div className="grid w-full h-full place-content-center">
-          <div className="p-4 border-2 border-gray-500 rounded-md min-w-[350px]">
+          <div className="p-4 border-2 bg-slate-800 rounded-md min-w-[350px]">
             <h2 className="py-1 mb-2 font-bold text-end">Sign Up</h2>
             <form onSubmit={(e) => handleSubmit(e)}>
               <div className="space-y-4">
@@ -118,21 +114,15 @@ const SignUp = ({ selectAction, setSelectAction }: SignUpProps) => {
               </div>
             </form>
 
-            <div className="flex items-center justify-center space-x-2 select-none">
-              <p
-                className="mt-1 text-xs font-semibold text-center cursor-pointer"
-                onClick={() => setSelectAction("none")}
-              >
-                Close
-              </p>
-
-              <p
-                className="mt-1 text-xs font-semibold text-center text-purple-400 cursor-pointer"
-                onClick={() => setSelectAction("login")}
+            <p>
+              Have an account?{" "}
+              <Link
+                href={"/account/login"}
+                className="mt-1 font-semibold text-center text-purple-400 cursor-pointer my-2"
               >
                 Login
-              </p>
-            </div>
+              </Link>
+            </p>
           </div>
         </div>
       </div>

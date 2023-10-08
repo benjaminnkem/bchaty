@@ -1,7 +1,7 @@
 "use client";
-import { MessageType } from "@/types/sendMessage.types";
-import { dbConnection } from "@/utils/db";
-import message from "@/utils/models/message";
+import { dbConnection } from "@/lib/utils/mongoConnection";
+import message from "@/lib/utils/models/message";
+import { MessageType } from "@/lib/types/sendMessage.types";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
@@ -93,7 +93,7 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
                   <p className="text-sm font-light whitespace-pre-line">{msg.message}</p>
                 </div>
               ))}
-              <div ref={messageEndRef} className="h-28"></div>
+              <div ref={messageEndRef} className="h-[10rem]"></div>
             </div>
           ) : (
             <div className="grid min-h-screen -mt-16 space-y-1 text-center select-none place-content-center">
