@@ -18,11 +18,6 @@ const Login = () => {
   const [inputs, setInputs] = useState<LogInfo>({ email: "", password: "" });
   const [status, setStatus] = useState({ loading: false });
   const router = useRouter();
-  const { user } = useUserData();
-
-  if (user) {
-    router.replace("/chat");
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setInputs({ ...inputs, [e.target.name]: e.target.value });

@@ -3,8 +3,9 @@ import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { dbConnection } from "@/lib/utils/mongoConnection";
 import UsersModel from "@/lib/utils/models/UsersSchema";
+import { NextAuthOptions } from "next-auth";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
       type: "credentials",
@@ -42,10 +43,12 @@ export default NextAuth({
     }),
   ],
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/account/login",
+    error: "/account/login",
   },
   session: {
     strategy: "jwt",
   },
-});
+};
+
+export default NextAuth(authOptions);

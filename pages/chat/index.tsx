@@ -5,9 +5,9 @@ import { MessageType } from "@/lib/types/sendMessage.types";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { Socket, io as ClientIO } from "socket.io-client";
-import { useUserData } from "@/lib/contexts/authuser-context";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import Login from "../account/login";
 
 const rand_colors = [
   "text-red-500",
@@ -32,14 +32,14 @@ const User = {
 
 let socket: Socket;
 const ChatPage: React.FC = ({ fetchMessages }: any) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
   const [messages, setMessages] = useState<MessageType[]>(
     JSON.parse(fetchMessages).sort((a: MessageType, b: MessageType) => (a.datetime_sent > b.datetime_sent ? 1 : -1))
   );
   const [messageBox, setMessageBox] = useState<string>("");
   const messageEndRef = useRef<HTMLDivElement>(null);
-
-  const router = useRouter();
-  const { data: session } = useSession();
 
   useEffect((): any => {
     socket = ClientIO(process.env.NEXT_PUBLIC_SITE_URL!, { path: "/api/socket/io" });
@@ -60,11 +60,6 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  if (!session) {
-    router.push("/account/login");
-    return;
-  }
-
   const handleSendMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!messageBox || messageBox === "") return;
@@ -80,19 +75,24 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
     scrollToBottom();
   };
 
+  if (!session) {
+    router.replace("/account/login");
+  }
+
   return (
     <>
       <Head>
         <title>Btchay - Chats</title>
       </Head>
-      <div>
-        <div className="fixed top-0 left-0 w-full p-4 bg-[#262626] z-20">
+
+      <main>
+        <div className="fixed top-0 left-0 w-full p-4 dark:bg-[#262626] z-20">
           <div className="flex items-center justify-center">
             <p className="py-1 font-bold">BChaty by Nkem Benjamin</p>
           </div>
         </div>
 
-        <div className="bg-[#1f1f1f] min-h-screen mt-16">
+        <div className="dark:bg-[#1f1f1f] border-red-500 border-2 min-h-screen mt-16">
           {messages.length > 0 ? (
             <div>
               {messages.map((msg, i) => (
@@ -130,7 +130,7 @@ const ChatPage: React.FC = ({ fetchMessages }: any) => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 };

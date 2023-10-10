@@ -24,7 +24,7 @@ const SignUp: React.FC<SignUpProps> = ({}: SignUpProps) => {
     fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: inputs.username, password: inputs.password }),
+      body: JSON.stringify({ ...inputs }),
     })
       .then(() => console.log("user created successfully"))
       .catch(() => {

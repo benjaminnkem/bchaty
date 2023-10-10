@@ -1,4 +1,4 @@
-import Providers from "@/lib/utils/providers";
+"use client";
 import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
@@ -7,9 +7,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   return (
     <main>
       <SessionProvider session={session}>
-        <Providers>
-          <Component {...pageProps} />
-        </Providers>
+        <Component {...pageProps} />
       </SessionProvider>
     </main>
   );
